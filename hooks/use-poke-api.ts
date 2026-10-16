@@ -3,6 +3,7 @@ import {
   cachePokeApiResponse,
   readCachedPokeApiResponse,
 } from "@/lib/pokeapi-cache";
+import type { PokeApiResponse } from "@/lib/pokeapi";
 
 interface PokeApiState<T> {
   data: T | undefined;
@@ -18,7 +19,9 @@ interface RequestState<T> {
   isLoading: boolean;
 }
 
-export function usePokeApi<T>(url: string): PokeApiState<T> {
+export function usePokeApi<T extends PokeApiResponse>(
+  url: string,
+): PokeApiState<T> {
   const [requestId, setRequestId] = useState(0);
   const [requestState, setRequestState] = useState<RequestState<T>>({
     key: `${url}:${requestId}`,

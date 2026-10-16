@@ -60,6 +60,13 @@ export interface GenerationDetail {
   pokemon_species: NamedResource[];
 }
 
+export type PokeApiResponse =
+  | ResourceList
+  | PokemonDetail
+  | ItemDetail
+  | MoveDetail
+  | GenerationDetail;
+
 export const COLLECTIONS: Record<CollectionType, { title: string; description: string }> = {
   items: { title: 'Items', description: 'Tools, treats, and treasures from the Pokémon world.' },
   moves: { title: 'Moves', description: 'Explore the moves Pokémon can learn in battle.' },
@@ -84,10 +91,6 @@ export function detailUrl(type: CatalogType, name: string): string {
 export function resourceId(url: string): number {
   const match = url.match(/\/(\d+)\/?$/);
   return match ? Number(match[1]) : 0;
-}
-
-export function pokemonArtwork(id: number): string {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 }
 
 export function formatName(value: string): string {

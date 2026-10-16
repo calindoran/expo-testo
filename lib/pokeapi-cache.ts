@@ -1,4 +1,5 @@
 import { openDatabaseAsync, type SQLiteDatabase } from "expo-sqlite";
+import type { PokeApiResponse } from "@/lib/pokeapi";
 
 const DATABASE_NAME = "pokedex-cache.db";
 const TABLE_NAME = "api_response_cache";
@@ -35,7 +36,7 @@ function getDatabase(): Promise<SQLiteDatabase> {
   return databasePromise;
 }
 
-export async function readCachedPokeApiResponse<T>(
+export async function readCachedPokeApiResponse<T extends PokeApiResponse>(
   url: string,
 ): Promise<T | undefined> {
   const database = await getDatabase();
@@ -54,9 +55,9 @@ export async function readCachedPokeApiResponse<T>(
   }
 }
 
-export async function cachePokeApiResponse(
+export async function cachePokeApiResponse<T extends PokeApiResponse>(
   url: string,
-  response: unknown,
+  response: T,
 ): Promise<void> {
   const database = await getDatabase();
   const payload = JSON.stringify(response);

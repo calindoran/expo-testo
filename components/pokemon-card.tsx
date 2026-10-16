@@ -8,7 +8,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { usePokeStyles, type PokePalette } from "@/constants/poke-theme";
-import { formatName, pokemonArtwork } from "@/lib/pokeapi";
+import { formatName } from "@/lib/pokeapi";
 
 export function PokemonCard({
   name,
@@ -33,7 +33,7 @@ export function PokemonCard({
       <View style={styles.artwork}>
         <Text style={styles.number}>#{String(id).padStart(3, "0")}</Text>
         <Image
-          source={pokemonArtwork(id)}
+          source={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`}
           contentFit="contain"
           style={styles.image}
           transition={150}

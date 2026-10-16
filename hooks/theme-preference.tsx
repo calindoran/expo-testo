@@ -1,4 +1,4 @@
-import "expo-sqlite/localStorage/install";
+import Storage from "expo-sqlite/kv-store";
 import {
   createContext,
   useCallback,
@@ -33,12 +33,12 @@ interface ThemePreferenceContextValue {
 }
 
 function readStoredPreference(): Pick<ThemeSnapshot, "preference" | "storageError"> {
-  if (typeof globalThis.localStorage === "undefined") {
+  if (Platform.OS === "web" && typeof window === "undefined") {
     return { preference: "system", storageError: null };
   }
 
   try {
-    const stored = globalThis.localStorage.getItem(STORAGE_KEY);
+    const stored = Storage.getItemSync(STORAGE_KEY);
     return {
       preference: stored === "light" || stored === "dark" ? stored : "system",
       storageError: null,
@@ -61,14 +61,6 @@ const subscribers = new Set<() => void>();
 function subscribe(listener: () => void) {
   subscribers.add(listener);
   return () => subscribers.delete(listener);
-}
-
-function getSnapshot() {
-  return snapshot;
-}
-
-function getServerSnapshot() {
-  return serverSnapshot;
 }
 
 function notifySubscribers() {
@@ -94,16 +86,16 @@ export function ThemePreferenceProvider({
   const deviceColorScheme = useDeviceColorScheme();
   const { preference, storageError, hydrated } = useSyncExternalStore(
     subscribe,
-    getSnapshot,
-    getServerSnapshot,
+    () => snapshot,
+    () => serverSnapshot,
   );
 
   const setPreference = useCallback((nextPreference: ThemePreference) => {
     try {
       if (nextPreference === "system") {
-        globalThis.localStorage.removeItem(STORAGE_KEY);
+        Storage.removeItemSync(STORAGE_KEY);
       } else {
-        globalThis.localStorage.setItem(STORAGE_KEY, nextPreference);
+        Storage.setItemSync(STORAGE_KEY, nextPreference);
       }
     } catch (error) {
       console.error("Failed to save the theme preference", error);
